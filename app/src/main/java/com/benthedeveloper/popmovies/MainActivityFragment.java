@@ -1,5 +1,6 @@
 package com.benthedeveloper.popmovies;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -22,15 +23,25 @@ public class MainActivityFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         // Test getting some data using theMovieDB
-        String baseURL = "http://api.themoviedb.org/3/";
-        String discoverMethodURL = "discover/movie";
-        String mostPopularParam = "?sort_by=popularity.desc";
-        String highestRatedParam = "?sort_by=vote_average.desc";
-        String apiKeyParam = "&api_key=" + BuildConfig.THE_MOVIE_DB_API_TOKEN;
-        Log.v(LOG_TAG, "most popular URL: " + baseURL + discoverMethodURL + mostPopularParam + apiKeyParam);
-        Log.v(LOG_TAG, "highest rated URL: " + baseURL + discoverMethodURL + highestRatedParam + apiKeyParam);
+        String mostPopularMoviesURL = getMovieDataURL(getString(R.string.api_parameter_value_popularitydesc));
+        String highestRatedMoviesURL = getMovieDataURL(getString(R.string.api_parameter_value_voteaveragedesc));
+        Log.v(LOG_TAG, "most popular URL: " + mostPopularMoviesURL);
+        Log.v(LOG_TAG, "highest rated URL: " + highestRatedMoviesURL);
         // End test getting some data using theMovieDB
 
         return inflater.inflate(R.layout.fragment_main, container, false);
+    }
+
+    // Helper method to get Movie URL
+    private String getMovieDataURL(String sortByParamValue) {
+        Uri.Builder builder = new Uri.Builder();
+        builder.scheme(getString(R.string.api_scheme))
+                .authority(getString(R.string.api_authority))
+                .appendPath(getString(R.string.api_version))
+                .appendPath(getString(R.string.api_path_discover))
+                .appendPath(getString(R.string.api_path_movie))
+                .appendQueryParameter(getString(R.string.api_parameter_key_sortby), sortByParamValue)
+                .appendQueryParameter(getString(R.string.api_parameter_key_apikey), BuildConfig.THE_MOVIE_DB_API_TOKEN);
+        return builder.build().toString();
     }
 }
