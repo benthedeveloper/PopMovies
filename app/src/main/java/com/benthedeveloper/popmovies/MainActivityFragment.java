@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -24,6 +25,8 @@ import java.net.URL;
  * A placeholder fragment containing a simple view.
  */
 public class MainActivityFragment extends Fragment {
+
+    private ArrayAdapter<JSONObject> mMovieBasicAdapter;
 
     private final String LOG_TAG = MainActivity.class.getSimpleName();
 
@@ -46,8 +49,22 @@ public class MainActivityFragment extends Fragment {
     }
 
     /**
-     * Get the movie data we need, and save it
+     * Method to get the full poster URL for a movie, given its poster_path
      */
+    private String getMoviePosterURL(String posterPath) {
+        // construct URL for theMovieDB API query (example URL: http://image.tmdb.org/t/p/w500/8uO0gUM8aNqYLs1OsTBQiXu0fEv.jpg
+        Uri.Builder builder = new Uri.Builder();
+        builder.scheme(getString(R.string.api_scheme))
+                .appendPath(getString(R.string.api_image_base_url))
+                .appendPath("t")
+                .appendPath("p")
+                .appendPath(getString(R.string.api_poster_size_phone))
+                .appendEncodedPath(posterPath)
+                .appendQueryParameter(getString(R.string.api_parameter_key_apikey), BuildConfig.THE_MOVIE_DB_API_TOKEN);;
+        String imageURLString = builder.build().toString();
+
+        return imageURLString;
+    }
 
     /**
      * Class to get the data from theMovieDB.org API on background thread
@@ -156,16 +173,20 @@ public class MainActivityFragment extends Fragment {
         protected void onPostExecute(JSONArray moviesArray) {
             if (moviesArray != null) {
                 try {
+                    final String SOMETHING1 = "";
                     final String OMD_ID = "id";
                     final String OMD_POSTER_PATH = "poster_path";
 
                     for (int i = 0; i < moviesArray.length(); i++) {
                         // Get the JSON object representing the movie
                         JSONObject movieObj = moviesArray.getJSONObject(i);
+                        // TODO: Add movieObj to array adapter
+                        // TEST LOGS
                         int id = movieObj.getInt(OMD_ID);
                         String posterPath = movieObj.getString(OMD_POSTER_PATH);
-                        // TEST LOG
                         Log.v(LOG_TAG, "movie id: " + id + ", posterPath: " + posterPath);
+                        Log.v(LOG_TAG, "movie poster URL: " + getMoviePosterURL(posterPath));
+                        // END TEST LOGS
                     }
                 } catch (JSONException e) {
                     Log.e(LOG_TAG, "JSON Exception Error ", e);
@@ -177,5 +198,4 @@ public class MainActivityFragment extends Fragment {
             }
         }
     }
-    // end FetchMovieIdsTask class
 }

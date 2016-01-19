@@ -15,5 +15,7 @@
     <string name="api_parameter_value_popularitydesc" translatable="false">popularity.desc</string>
     <string name="api_parameter_value_voteaveragedesc" translatable="false">vote_average.desc</string>
     <string name="api_parameter_key_apikey" translatable="false">api_key</string>
+    <string name="api_image_base_url" translatable="false">image.tmdb.org</string>
+    <string name="api_poster_size_phone" translatable="false">w185</string>
 
 </resources>
