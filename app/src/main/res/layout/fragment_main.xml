@@ -9,5 +9,5 @@
     android:horizontalSpacing="0dp"
     android:stretchMode="columnWidth"
     tools:context=".MainActivityFragment"
-    android:id="@+id/popmovies_grid">
+    android:id="@+id/gridlayout_popmovies">
 </GridView>

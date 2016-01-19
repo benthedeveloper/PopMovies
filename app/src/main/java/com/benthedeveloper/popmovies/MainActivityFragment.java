@@ -8,7 +8,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -20,13 +19,14 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 
 /**
  * A placeholder fragment containing a simple view.
  */
 public class MainActivityFragment extends Fragment {
 
-    private ArrayAdapter<JSONObject> mMovieBasicAdapter;
+//    private ArrayAdapter<JSONObject> mMovieBasicAdapter;
 
     private final String LOG_TAG = MainActivity.class.getSimpleName();
 
@@ -37,15 +37,40 @@ public class MainActivityFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        // Test getting some data using theMovieDB
+        // The ArrayAdapter will take data from a source and
+        // use it to populate the view it's attached to.
+//        mMovieBasicAdapter = new ArrayAdapter<JSONObject>(
+//                getActivity(), // the current context
+//                R.layout.grid_item_moviesbasic, // the name of the layout
+//                R.id.grid_item_moviesbasic_imageview, // the id of the ImageView to populate
+//                new ArrayList<JSONObject>());
+
+        View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+
+        // Get a reference to the GridView, and attach the adapter to it.
+//        GridView gridView = (GridView) rootView.findViewById(R.id.gridlayout_popmovies);
+//        gridView.setAdapter(mMovieBasicAdapter);
+
+        return rootView;
+    }
+
+    /**
+     * Method to update the main UI
+     */
+    private void updateMoviesBasic() {
         FetchMoviesBasicTask moviesTask = new FetchMoviesBasicTask();
-        // Add sharedpreferences stuff here instead of hardcoding sorting parameter
+        // TODO: Add sharedpreferences stuff here instead of hardcoding sorting parameter
         String sortingParamValue = getString(R.string.api_parameter_value_popularitydesc);
         moviesTask.execute(sortingParamValue);
+    }
 
-        // End test getting some data using theMovieDB
-
-        return inflater.inflate(R.layout.fragment_main, container, false);
+    /**
+     * Update the basic UI when the activity starts
+     */
+    @Override
+    public void onStart() {
+        super.onStart();
+        updateMoviesBasic();
     }
 
     /**
@@ -69,12 +94,12 @@ public class MainActivityFragment extends Fragment {
     /**
      * Class to get the data from theMovieDB.org API on background thread
      */
-    public class FetchMoviesBasicTask extends AsyncTask<String, Void, JSONArray> {
+    public class FetchMoviesBasicTask extends AsyncTask<String, Void, ArrayList<Movie>> {
 
         private final String LOG_TAG = FetchMoviesBasicTask.class.getSimpleName();
 
         @Override
-        protected JSONArray doInBackground(String... params) {
+        protected ArrayList<Movie> doInBackground(String... params) {
 
             // If there's no sort_by parameter, there's nothing to look up. Verify size of params.
             if (params.length == 0) {
@@ -102,7 +127,6 @@ public class MainActivityFragment extends Fragment {
                         .appendPath(getString(R.string.api_path_movie))
                         .appendQueryParameter(getString(R.string.api_parameter_key_sortby), sortByParamValue)
                         .appendQueryParameter(getString(R.string.api_parameter_key_apikey), BuildConfig.THE_MOVIE_DB_API_TOKEN);
-                //return builder.build().toString();
                 String urlString = builder.build().toString();
                 URL url = new URL(urlString);
 
@@ -135,7 +159,7 @@ public class MainActivityFragment extends Fragment {
                 moviesJsonStr = buffer.toString();
             } catch (IOException e) {
                 Log.e(LOG_TAG, "Error ", e);
-                // If the code didn't successfully get the weather data, there's no point in attemping
+                // If the code didn't successfully get the data, there's no point in attemping
                 // to parse it.
                 return null;
             } finally {
@@ -157,8 +181,25 @@ public class MainActivityFragment extends Fragment {
                 JSONObject moviesJson = new JSONObject(moviesJsonStr);
                 JSONArray moviesJSONArray = moviesJson.getJSONArray(OMD_RESULTS);
 
-                return moviesJSONArray;
-                //return getMoviesFromJson(moviesJsonStr);
+                // ArrayList to store the result in
+                ArrayList<Movie> result = new ArrayList<Movie>(moviesJSONArray.length());
+
+                // Populate result with each Movie object
+                for (int i = 0; i < moviesJSONArray.length(); i++) {
+                    // Get the JSON object representing the movie
+                    JSONObject movieObj = moviesJSONArray.getJSONObject(i);
+                    int id = movieObj.getInt("id");
+                    String originalTitle = movieObj.getString("original_title");
+                    String posterURL = getMoviePosterURL(movieObj.getString("poster_path"));
+                    String overview = movieObj.getString("overview");
+                    long voteAverage = movieObj.getLong("vote_average");
+                    String releaseDateStr = movieObj.getString("release_date");
+                    // Add the Movie object
+                    result.add(new Movie(id, originalTitle, posterURL, overview, voteAverage, releaseDateStr));
+                }
+
+                // return the ArrayList containing Movie objects
+                return result;
             } catch (JSONException e) {
                 Log.e(LOG_TAG, e.getMessage(), e);
                 e.printStackTrace();
@@ -170,31 +211,15 @@ public class MainActivityFragment extends Fragment {
 
         // Update the UI here
         @Override
-        protected void onPostExecute(JSONArray moviesArray) {
-            if (moviesArray != null) {
-                try {
-                    final String SOMETHING1 = "";
-                    final String OMD_ID = "id";
-                    final String OMD_POSTER_PATH = "poster_path";
-
-                    for (int i = 0; i < moviesArray.length(); i++) {
-                        // Get the JSON object representing the movie
-                        JSONObject movieObj = moviesArray.getJSONObject(i);
-                        // TODO: Add movieObj to array adapter
-                        // TEST LOGS
-                        int id = movieObj.getInt(OMD_ID);
-                        String posterPath = movieObj.getString(OMD_POSTER_PATH);
-                        Log.v(LOG_TAG, "movie id: " + id + ", posterPath: " + posterPath);
-                        Log.v(LOG_TAG, "movie poster URL: " + getMoviePosterURL(posterPath));
-                        // END TEST LOGS
-                    }
-                } catch (JSONException e) {
-                    Log.e(LOG_TAG, "JSON Exception Error ", e);
+        protected void onPostExecute(ArrayList<Movie> moviesArrayList) {
+            if (moviesArrayList != null) {
+                for (Movie movie : moviesArrayList) {
+                    // TEST LOGS
+                    Log.v(LOG_TAG, "movie id: " + movie.getId() + ", poster URL: " + movie.getPosterURL());
+                    // END TEST LOGS
+                    // mMovieBasicAdapter.clear();
+                    // mMovieBasicAdapter.add(movie);
                 }
-//                mForecastAdapter.clear();
-//                for(String dayForecastStr : result) {
-//                    mForecastAdapter.add(dayForecastStr);
-//                }
             }
         }
     }
