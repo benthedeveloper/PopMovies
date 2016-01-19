@@ -35,12 +35,10 @@ public class MainActivityFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         // Test getting some data using theMovieDB
-        FetchMovieIdsTask movieIdsTask = new FetchMovieIdsTask();
+        FetchMoviesBasicTask moviesTask = new FetchMoviesBasicTask();
         // Add sharedpreferences stuff here instead of hardcoding sorting parameter
         String sortingParamValue = getString(R.string.api_parameter_value_popularitydesc);
-        movieIdsTask.execute(sortingParamValue);
-
-        // TODO: Get movie poster URL from ids 
+        moviesTask.execute(sortingParamValue);
 
         // End test getting some data using theMovieDB
 
@@ -48,44 +46,18 @@ public class MainActivityFragment extends Fragment {
     }
 
     /**
-     * Take the movies data string in JSON Format and get an array of movie IDs we can use to
-     * get the poster, title, etc.
+     * Get the movie data we need, and save it
      */
-    private int[] getMovieIdsFromJson(String moviesJsonStr)
-            throws JSONException {
-
-        final String OMD_RESULTS = "results";
-        final String OMD_ID = "id";
-
-        JSONObject moviesJson = new JSONObject(moviesJsonStr);
-        JSONArray moviesArray = moviesJson.getJSONArray(OMD_RESULTS);
-
-        int[] movieIdsArray = new int[moviesArray.length()];
-
-        for (int i = 0; i < moviesArray.length(); i++) {
-            int curId;
-
-            // Get the JSON object representing the movie
-            JSONObject movieObj = moviesArray.getJSONObject(i);
-            curId = movieObj.getInt(OMD_ID);
-            movieIdsArray[i] = curId;
-        }
-
-        // TEST LOG
-        Log.v(LOG_TAG, movieIdsArray.toString());
-
-        return movieIdsArray;
-    }
 
     /**
      * Class to get the data from theMovieDB.org API on background thread
      */
-    public class FetchMovieIdsTask extends AsyncTask<String, Void, int[]> {
+    public class FetchMoviesBasicTask extends AsyncTask<String, Void, JSONArray> {
 
-        private final String LOG_TAG = FetchMovieIdsTask.class.getSimpleName();
+        private final String LOG_TAG = FetchMoviesBasicTask.class.getSimpleName();
 
         @Override
-        protected int[] doInBackground(String... params) {
+        protected JSONArray doInBackground(String... params) {
 
             // If there's no sort_by parameter, there's nothing to look up. Verify size of params.
             if (params.length == 0) {
@@ -163,7 +135,13 @@ public class MainActivityFragment extends Fragment {
             }
 
             try {
-                return getMovieIdsFromJson(moviesJsonStr);
+                final String OMD_RESULTS = "results";
+
+                JSONObject moviesJson = new JSONObject(moviesJsonStr);
+                JSONArray moviesJSONArray = moviesJson.getJSONArray(OMD_RESULTS);
+
+                return moviesJSONArray;
+                //return getMoviesFromJson(moviesJsonStr);
             } catch (JSONException e) {
                 Log.e(LOG_TAG, e.getMessage(), e);
                 e.printStackTrace();
@@ -175,16 +153,27 @@ public class MainActivityFragment extends Fragment {
 
         // Update the UI here
         @Override
-        protected void onPostExecute(int[] result) {
-            if (result != null) {
-                for (int movieId : result) {
-                    Log.v("onPostExecute", new Integer(movieId).toString());
+        protected void onPostExecute(JSONArray moviesArray) {
+            if (moviesArray != null) {
+                try {
+                    final String OMD_ID = "id";
+                    final String OMD_POSTER_PATH = "poster_path";
+
+                    for (int i = 0; i < moviesArray.length(); i++) {
+                        // Get the JSON object representing the movie
+                        JSONObject movieObj = moviesArray.getJSONObject(i);
+                        int id = movieObj.getInt(OMD_ID);
+                        String posterPath = movieObj.getString(OMD_POSTER_PATH);
+                        // TEST LOG
+                        Log.v(LOG_TAG, "movie id: " + id + ", posterPath: " + posterPath);
+                    }
+                } catch (JSONException e) {
+                    Log.e(LOG_TAG, "JSON Exception Error ", e);
                 }
 //                mForecastAdapter.clear();
 //                for(String dayForecastStr : result) {
 //                    mForecastAdapter.add(dayForecastStr);
 //                }
-                // New data is back from the server.  Hooray!
             }
         }
     }
