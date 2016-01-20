@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.GridView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -26,7 +27,7 @@ import java.util.ArrayList;
  */
 public class MainActivityFragment extends Fragment {
 
-//    private ArrayAdapter<JSONObject> mMovieBasicAdapter;
+    private MoviesAdapter mMoviesAdapter;
 
     private final String LOG_TAG = MainActivity.class.getSimpleName();
 
@@ -39,17 +40,14 @@ public class MainActivityFragment extends Fragment {
 
         // The ArrayAdapter will take data from a source and
         // use it to populate the view it's attached to.
-//        mMovieBasicAdapter = new ArrayAdapter<JSONObject>(
-//                getActivity(), // the current context
-//                R.layout.grid_item_moviesbasic, // the name of the layout
-//                R.id.grid_item_moviesbasic_imageview, // the id of the ImageView to populate
-//                new ArrayList<JSONObject>());
+        mMoviesAdapter = new MoviesAdapter(getContext(), new ArrayList<Movie>());
 
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
         // Get a reference to the GridView, and attach the adapter to it.
-//        GridView gridView = (GridView) rootView.findViewById(R.id.gridlayout_popmovies);
-//        gridView.setAdapter(mMovieBasicAdapter);
+        GridView gridView = (GridView) rootView.findViewById(R.id.gridlayout_popmovies);
+        gridView.setAdapter(mMoviesAdapter);
+        // TODO: Add onItemClickListener to the gridView
 
         return rootView;
     }
@@ -213,12 +211,12 @@ public class MainActivityFragment extends Fragment {
         @Override
         protected void onPostExecute(ArrayList<Movie> moviesArrayList) {
             if (moviesArrayList != null) {
+                mMoviesAdapter.clear();
                 for (Movie movie : moviesArrayList) {
                     // TEST LOGS
                     Log.v(LOG_TAG, movie.toString());
                     // END TEST LOGS
-                    // mMovieBasicAdapter.clear();
-                    // mMovieBasicAdapter.add(movie);
+                    mMoviesAdapter.add(movie);
                 }
             }
         }
