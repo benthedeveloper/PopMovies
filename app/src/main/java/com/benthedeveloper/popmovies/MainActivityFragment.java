@@ -192,7 +192,7 @@ public class MainActivityFragment extends Fragment {
                     String originalTitle = movieObj.getString("original_title");
                     String posterURL = getMoviePosterURL(movieObj.getString("poster_path"));
                     String overview = movieObj.getString("overview");
-                    long voteAverage = movieObj.getLong("vote_average");
+                    double voteAverage = movieObj.getDouble("vote_average");
                     String releaseDateStr = movieObj.getString("release_date");
                     // Add the Movie object
                     result.add(new Movie(id, originalTitle, posterURL, overview, voteAverage, releaseDateStr));
@@ -215,7 +215,7 @@ public class MainActivityFragment extends Fragment {
             if (moviesArrayList != null) {
                 for (Movie movie : moviesArrayList) {
                     // TEST LOGS
-                    Log.v(LOG_TAG, "movie id: " + movie.getId() + ", poster URL: " + movie.getPosterURL());
+                    Log.v(LOG_TAG, movie.toString());
                     // END TEST LOGS
                     // mMovieBasicAdapter.clear();
                     // mMovieBasicAdapter.add(movie);
