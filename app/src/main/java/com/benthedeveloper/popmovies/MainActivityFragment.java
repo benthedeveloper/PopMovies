@@ -78,12 +78,12 @@ public class MainActivityFragment extends Fragment {
         // construct URL for theMovieDB API query (example URL: http://image.tmdb.org/t/p/w500/8uO0gUM8aNqYLs1OsTBQiXu0fEv.jpg
         Uri.Builder builder = new Uri.Builder();
         builder.scheme(getString(R.string.api_scheme))
-                .appendPath(getString(R.string.api_image_base_url))
+                .authority(getString(R.string.api_image_base_url))
                 .appendPath("t")
                 .appendPath("p")
                 .appendPath(getString(R.string.api_poster_size_phone))
                 .appendEncodedPath(posterPath)
-                .appendQueryParameter(getString(R.string.api_parameter_key_apikey), BuildConfig.THE_MOVIE_DB_API_TOKEN);;
+                .appendQueryParameter(getString(R.string.api_parameter_key_apikey), BuildConfig.THE_MOVIE_DB_API_TOKEN);
         String imageURLString = builder.build().toString();
 
         return imageURLString;
@@ -213,9 +213,6 @@ public class MainActivityFragment extends Fragment {
             if (moviesArrayList != null) {
                 mMoviesAdapter.clear();
                 for (Movie movie : moviesArrayList) {
-                    // TEST LOGS
-                    Log.v(LOG_TAG, movie.toString());
-                    // END TEST LOGS
                     mMoviesAdapter.add(movie);
                 }
             }

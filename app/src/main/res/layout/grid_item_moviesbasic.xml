@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ImageView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:scaleType="centerCrop"
-    android:id="@+id/grid_item_moviesbasic_imageview"/>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="horizontal" >
+
+    <!-- Make ImageViews 50% width using layout_weight -->
+    <ImageView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="185dp"
+        android:layout_height="278dp"
+        android:id="@+id/grid_item_moviesbasic_imageview" />
+
+</LinearLayout>

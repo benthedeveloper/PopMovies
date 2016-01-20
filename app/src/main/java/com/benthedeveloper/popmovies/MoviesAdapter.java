@@ -16,6 +16,8 @@ import java.util.ArrayList;
  * Custom ArrayAdapter class
  */
 public class MoviesAdapter extends ArrayAdapter<Movie> {
+    private final String LOG_TAG = MoviesAdapter.class.getSimpleName();
+    private Context context = getContext();
 
     // Constructor
     public MoviesAdapter(Context context, ArrayList<Movie> movies) {
@@ -28,13 +30,23 @@ public class MoviesAdapter extends ArrayAdapter<Movie> {
         Movie movie = getItem(position);
         // Check if an existing view is being reused, otherwise inflate the view
         if (convertView == null) {
-            convertView = LayoutInflater.from(getContext()).inflate(R.layout.grid_item_moviesbasic, parent, false);
+            convertView = LayoutInflater.from(context).inflate(R.layout.grid_item_moviesbasic, parent, false);
         }
         // Lookup view for data population
         ImageView posterImageView = (ImageView) convertView.findViewById(R.id.grid_item_moviesbasic_imageview);
+
         // Populate the data into the template view using the data object
-        Picasso.with(getContext()).load(movie.getPosterURL()).into(posterImageView);
-        // Return the completed view to render on screen
+        if (posterImageView == null) {
+            posterImageView = new ImageView(context);
+        }
+
+        // Use Picasso to load poster into image view
+        Picasso.with(context)
+                .load(movie.getPosterURL())
+                .fit()
+                .centerCrop()
+                .into(posterImageView);
+
         return convertView;
     }
 }
