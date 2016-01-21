@@ -1,8 +1,10 @@
 package com.benthedeveloper.popmovies;
 
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -57,8 +59,10 @@ public class MainActivityFragment extends Fragment {
      */
     private void updateMoviesBasic() {
         FetchMoviesBasicTask moviesTask = new FetchMoviesBasicTask();
-        // TODO: Add sharedpreferences stuff here instead of hardcoding sorting parameter
-        String sortingParamValue = getString(R.string.api_parameter_value_popularitydesc);
+        // Add sharedpreferences stuff here instead of hardcoding sorting parameter
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        String sortingParamValue = prefs.getString(getString(R.string.pref_sortby_key),
+                getString(R.string.pref_sortby_default));
         moviesTask.execute(sortingParamValue);
     }
 
