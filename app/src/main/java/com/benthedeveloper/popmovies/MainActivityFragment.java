@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.GridView;
 
 import org.json.JSONArray;
@@ -49,7 +50,15 @@ public class MainActivityFragment extends Fragment {
         // Get a reference to the GridView, and attach the adapter to it.
         GridView gridView = (GridView) rootView.findViewById(R.id.gridlayout_popmovies);
         gridView.setAdapter(mMoviesAdapter);
-        // TODO: Add onItemClickListener to the gridView
+        // Set click listener for gridView
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Movie clickedMovie = mMoviesAdapter.getItem(position);
+                Log.v(LOG_TAG, "clicked movie: " + clickedMovie.toString());
+                //Intent intent = new Intent(getActivity(), DetailActivity.class).putExtra
+            }
+        });
 
         return rootView;
     }

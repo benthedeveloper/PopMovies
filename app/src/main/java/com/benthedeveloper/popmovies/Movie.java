@@ -1,11 +1,5 @@
 package com.benthedeveloper.popmovies;
 
-import android.util.Log;
-
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 /**
  * Created by Ben Harrison on 1/19/2016.
  * Object to represent a movie for the app
@@ -16,7 +10,7 @@ public class Movie {
     private String posterURL;
     private String overview;
     private double voteAverage;
-    private Date releaseDate;
+    private String releaseDateStr;
 
     // Constructor
     public Movie(int id, String originalTitle, String posterURL, String overview, double voteAverage, String releaseDateStr) {
@@ -25,7 +19,7 @@ public class Movie {
         this.posterURL = posterURL;
         this.overview = overview;
         this.voteAverage = voteAverage;
-        this.releaseDate = formatDateString(releaseDateStr, "yyyy-MM-dd");
+        this.releaseDateStr = releaseDateStr;
     }
 
     // toString method
@@ -35,9 +29,10 @@ public class Movie {
                 + "posterURL: " + getPosterURL() + "\n"
                 + "overview: " + getOverview() + "\n"
                 + "voteAverage: " + getVoteAverage() + "\n"
-                + "releaseDate: " + getDateString(getReleaseDate(), "yyyy-MM-dd") + "\n\n";
+                + "releaseDateStr: " + getReleaseDateStr() + "\n\n";
     }
 
+    // Getters
     public int getId() {
         return this.id;
     }
@@ -54,30 +49,12 @@ public class Movie {
         return this.overview;
     }
 
-    public double getVoteAverage() {
-        return this.voteAverage;
-    }
+    public double getVoteAverage() { return this.voteAverage; }
 
-    public Date getReleaseDate() {
-        return this.releaseDate;
-    }
-
-    // helper method to convert string to a Date object
-    private Date formatDateString(String dateStr, String formatStr) {
-        DateFormat dateFormat = new SimpleDateFormat(formatStr);
-        try {
-            Date releaseDateObj = dateFormat.parse(dateStr);
-            return releaseDateObj;
-        } catch(Exception e) {
-            Log.e("Error", "Error parsing date");
+    public String getReleaseDateStr() {
+        if (this.releaseDateStr == null || this.releaseDateStr.trim() == "") {
+            return "";
         }
-        // If we got here there was an error parsing date
-        return null;
-    }
-
-    // helper method to convert Date object to string
-    private String getDateString(Date dateObj, String formatStr) {
-        DateFormat dateFormat = new SimpleDateFormat(formatStr);
-        return dateFormat.format(dateObj);
+        return this.releaseDateStr;
     }
 }

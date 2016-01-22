@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.benthedeveloper.popmovies.DetailActivity">
+
+    <!-- Toolbar -->
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/movieTitle_toolbar"
+        style="@style/MovieTitleToolbar">
+
+        <!-- TextView inside toolbar for original title text -->
+        <TextView
+            android:id="@+id/movieTitle_toolbar_textView"
+            style="@style/MovieTitleToolbar.TextView"
+            android:text="Movie Title Text Here" />
+
+    </android.support.v7.widget.Toolbar>
+
+    <!-- Content below toolbar -->
+    <RelativeLayout
+        android:id="@+id/detailsContentBelowToolbar_relativeLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="10dp"
+        android:layout_below="@id/movieTitle_toolbar">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clipChildren="false"
+            android:id="@+id/posterAndDetails_relativeLayout">
+
+            <!-- Container for Image + year/duration/vote avg. etc. -->
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <!-- Container for poster -->
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <!-- Poster -->
+                    <ImageView
+                        android:id="@+id/detail_moviePoster_imageView"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:src="@drawable/testposterimage"
+                        android:scaleType="fitStart" />
+
+                </LinearLayout>
+
+                <!-- Container for year, movie duration, etc. -->
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <!--<TextView-->
+                        <!--android:layout_width="match_parent"-->
+                        <!--android:layout_height="match_parent"-->
+                        <!--android:text="Test text here" />-->
+                    <!--<TextView-->
+                        <!--android:layout_width="match_parent"-->
+                        <!--android:layout_height="match_parent"-->
+                        <!--android:text="Test text here" />-->
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/overview_relativeLayout"
+            android:layout_below="@+id/posterAndDetails_relativeLayout"
+            android:paddingTop="10dp">
+
+            <!-- Add TextView for overview here -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Overview text here"
+                android:textSize="18sp" />
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+</RelativeLayout>
