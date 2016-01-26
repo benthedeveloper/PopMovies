@@ -27,7 +27,13 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.benthedeveloper.popmovies.MainActivity" />
         </activity>
-        <activity android:name=".DetailActivity"></activity>
+        <activity
+            android:name=".DetailActivity"
+            android:label="Movie Details">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.benthedeveloper.popmovies.MainActivity" />
+        </activity>
     </application>
 
 </manifest>

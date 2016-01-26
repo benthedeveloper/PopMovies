@@ -16,7 +16,6 @@ import java.util.ArrayList;
  * Custom ArrayAdapter class
  */
 public class MoviesAdapter extends ArrayAdapter<Movie> {
-    private final String LOG_TAG = MoviesAdapter.class.getSimpleName();
     private Context context = getContext();
 
     // Constructor

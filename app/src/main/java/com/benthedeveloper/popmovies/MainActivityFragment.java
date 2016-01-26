@@ -47,10 +47,10 @@ public class MainActivityFragment extends Fragment {
         setHasOptionsMenu(true);
     }
 
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_main, menu);
-    }
+//    @Override
+//    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+//        inflater.inflate(R.menu.menu_main, menu);
+//    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -72,7 +72,7 @@ public class MainActivityFragment extends Fragment {
                 Movie clickedMovie = mMoviesAdapter.getItem(position);
                 // Pass Movie object to DetailActivity in an Intent
                 Intent intent = new Intent(getActivity(), DetailActivity.class);
-                intent.putExtra("movieObj", clickedMovie);
+                intent.putExtra("movie_object", clickedMovie);
                 startActivity(intent);
             }
         });
