@@ -34,7 +34,7 @@
                 android:layout_height="wrap_content">
 
                 <!-- Container for Image + year/duration/vote avg. etc. -->
-                <RelativeLayout
+                <LinearLayout
                     android:id="@+id/posterAndDetails_relativeLayout"
                     android:orientation="horizontal"
                     android:layout_width="match_parent"
@@ -44,13 +44,16 @@
                     <LinearLayout
                         android:orientation="vertical"
                         android:layout_width="185dp"
-                        android:layout_height="278dp">
+                        android:layout_height="278dp"
+                        android:layout_marginRight="30dp"
+                        android:layout_marginBottom="20dp">
 
                         <!-- Poster -->
                         <ImageView
                             android:id="@+id/detail_moviePoster_imageView"
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent" />
+                            android:layout_height="match_parent"
+                            android:src="@drawable/testposterimage" />
 
                     </LinearLayout>
 
@@ -60,17 +63,25 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content">
 
-                        <!--<TextView-->
-                        <!--android:layout_width="match_parent"-->
-                        <!--android:layout_height="match_parent"-->
-                        <!--android:text="Test text here" />-->
-                        <!--<TextView-->
-                        <!--android:layout_width="match_parent"-->
-                        <!--android:layout_height="match_parent"-->
-                        <!--android:text="Test text here" />-->
+                        <TextView
+                            android:id="@+id/detail_movieYear_textView"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:textSize="30sp" />
+                        <TextView
+                            android:id="@+id/detail_movieDuration_textView"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:textSize="20sp"
+                            android:paddingBottom="10dp" />
+                        <TextView
+                            android:id="@+id/detail_movieVoteAvg_textView"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:textColor="#000" />
 
                     </LinearLayout>
-                </RelativeLayout>
+                </LinearLayout>
 
                 <RelativeLayout
                     android:layout_width="wrap_content"
@@ -81,8 +92,7 @@
                         android:id="@+id/detail_overview_textView"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textSize="18sp"
-                        android:text="testing" />
+                        android:textSize="18sp" />
 
                 </RelativeLayout>
 

@@ -12,6 +12,8 @@
     <string name="api_parameter_value_voteaveragedesc" translatable="false">vote_average.desc</string>
     <string name="api_parameter_key_apikey" translatable="false">api_key</string>
     <string name="api_image_base_url" translatable="false">image.tmdb.org</string>
+    <string name="minutes_shorthand">min</string>
+    <string name="max_vote_avg" translatable="false">10</string>
 
     <!-- Poster size -->
     <string name="api_poster_size_phone" translatable="false">w185</string>
@@ -24,7 +26,7 @@
     <string name="title_activity_settings">Settings</string>
     <string name="pref_sortby_default" translatable="false">popularity.desc</string>
 
-    <!-- Key name for temperature unit preference in SharedPreferences [CHAR LIMIT=NONE] -->
+    <!-- Key name for sorting preference in SharedPreferences -->
     <string name="pref_sortby_key" translatable="false">sort_by</string>
 
 </resources>

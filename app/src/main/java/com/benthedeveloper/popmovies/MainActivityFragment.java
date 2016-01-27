@@ -9,8 +9,6 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -141,9 +139,12 @@ public class MainActivityFragment extends Fragment {
             // so that they can be closed in the finally block.
             HttpURLConnection urlConnection = null;
             BufferedReader reader = null;
+            HttpURLConnection movieUrlConnection = null;
+            BufferedReader movieReader = null;
 
             // Will contain the raw JSON response as a string.
             String moviesJsonStr = null;
+            String curDetailedMovieJsonStr = null;
 
             try {
                 // construct URL for theMovieDB API query
@@ -185,6 +186,81 @@ public class MainActivityFragment extends Fragment {
                     return null;
                 }
                 moviesJsonStr = buffer.toString();
+
+                try {
+                    final String OMD_RESULTS = "results";
+
+                    JSONObject moviesJson = new JSONObject(moviesJsonStr);
+                    JSONArray moviesJSONArray = moviesJson.getJSONArray(OMD_RESULTS);
+
+                    // ArrayList to store the result in
+                    ArrayList<Movie> result = new ArrayList<Movie>(moviesJSONArray.length());
+
+                    // Populate result with each Movie object
+                    for (int i = 0; i < moviesJSONArray.length(); i++) {
+                        // Get the JSON object representing the movie (basic data)
+                        JSONObject movieBasicObj = moviesJSONArray.getJSONObject(i);
+                        int id = movieBasicObj.getInt("id");
+
+                        // Get details for each movie using the "/movie/id" endpoint
+                        Uri.Builder builderMovieEndpoint = new Uri.Builder();
+                        builderMovieEndpoint.scheme(getString(R.string.api_scheme))
+                                .authority(getString(R.string.api_authority))
+                                .appendPath(getString(R.string.api_version))
+                                .appendPath(getString(R.string.api_path_movie))
+                                .appendPath(Integer.toString(id))
+                                .appendQueryParameter(getString(R.string.api_parameter_key_apikey), BuildConfig.THE_MOVIE_DB_API_TOKEN);
+                        String urlStringMovieEndpoint = builderMovieEndpoint.build().toString();
+                        URL urlMovieEndpoint = new URL(urlStringMovieEndpoint);
+
+                        // Create the request to theMovieDB, and open the connection
+                        movieUrlConnection = (HttpURLConnection) urlMovieEndpoint.openConnection();
+                        movieUrlConnection.setRequestMethod("GET");
+                        movieUrlConnection.connect();
+
+                        // Read the input stream into a String
+                        InputStream inputStreamMovie = movieUrlConnection.getInputStream();
+                        StringBuffer bufferMovie = new StringBuffer();
+                        if (inputStreamMovie == null) {
+                            // Nothing to do.
+                            return null;
+                        }
+                        movieReader = new BufferedReader(new InputStreamReader(inputStreamMovie));
+
+                        String lineMovie;
+                        while ((lineMovie = movieReader.readLine()) != null) {
+                            // Since it's JSON, adding a newline isn't necessary (it won't affect parsing)
+                            // But it does make debugging a *lot* easier if you print out the completed
+                            // buffer for debugging.
+                            bufferMovie.append(lineMovie + "\n");
+                        }
+
+                        if (bufferMovie.length() == 0) {
+                            // Stream was empty.  No point in parsing.
+                            return null;
+                        }
+                        curDetailedMovieJsonStr = bufferMovie.toString();
+                        // TEST LOG
+                        JSONObject curMovieJsonObj = new JSONObject(curDetailedMovieJsonStr);
+
+                        // Get data fields
+                        String originalTitle = curMovieJsonObj.getString("original_title");
+                        String posterURL = getMoviePosterURL(curMovieJsonObj.getString("poster_path"));
+                        String overview = curMovieJsonObj.getString("overview");
+                        double voteAverage = curMovieJsonObj.getDouble("vote_average");
+                        String releaseDateStr = curMovieJsonObj.getString("release_date");
+                        int runtime = curMovieJsonObj.getInt("runtime");
+                        // Add the Movie object
+                        result.add(new Movie(id, originalTitle, posterURL, overview, voteAverage, releaseDateStr, runtime));
+                    }
+
+                    // return the ArrayList containing Movie objects
+                    return result;
+                } catch (JSONException e) {
+                    Log.e(LOG_TAG, e.getMessage(), e);
+                    e.printStackTrace();
+                }
+
             } catch (IOException e) {
                 Log.e(LOG_TAG, "Error ", e);
                 // If the code didn't successfully get the data, there's no point in attemping
@@ -194,6 +270,9 @@ public class MainActivityFragment extends Fragment {
                 if (urlConnection != null) {
                     urlConnection.disconnect();
                 }
+                if (movieUrlConnection != null) {
+                    movieUrlConnection.disconnect();
+                }
                 if (reader != null) {
                     try {
                         reader.close();
@@ -201,36 +280,13 @@ public class MainActivityFragment extends Fragment {
                         Log.e(LOG_TAG, "Error closing stream", e);
                     }
                 }
-            }
-
-            try {
-                final String OMD_RESULTS = "results";
-
-                JSONObject moviesJson = new JSONObject(moviesJsonStr);
-                JSONArray moviesJSONArray = moviesJson.getJSONArray(OMD_RESULTS);
-
-                // ArrayList to store the result in
-                ArrayList<Movie> result = new ArrayList<Movie>(moviesJSONArray.length());
-
-                // Populate result with each Movie object
-                for (int i = 0; i < moviesJSONArray.length(); i++) {
-                    // Get the JSON object representing the movie
-                    JSONObject movieObj = moviesJSONArray.getJSONObject(i);
-                    int id = movieObj.getInt("id");
-                    String originalTitle = movieObj.getString("original_title");
-                    String posterURL = getMoviePosterURL(movieObj.getString("poster_path"));
-                    String overview = movieObj.getString("overview");
-                    double voteAverage = movieObj.getDouble("vote_average");
-                    String releaseDateStr = movieObj.getString("release_date");
-                    // Add the Movie object
-                    result.add(new Movie(id, originalTitle, posterURL, overview, voteAverage, releaseDateStr));
+                if (movieReader != null) {
+                    try {
+                        movieReader.close();
+                    } catch (final IOException e) {
+                        Log.e(LOG_TAG, "Error closing movieReader stream", e);
+                    }
                 }
-
-                // return the ArrayList containing Movie objects
-                return result;
-            } catch (JSONException e) {
-                Log.e(LOG_TAG, e.getMessage(), e);
-                e.printStackTrace();
             }
 
             // This will only happen if there was an error getting or parsing the data

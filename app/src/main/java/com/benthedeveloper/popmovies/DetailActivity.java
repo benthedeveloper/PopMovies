@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -81,6 +80,9 @@ public class DetailActivity extends AppCompatActivity {
                 // Get the views to populate
                 TextView movieTitleTextView = (TextView) rootView.findViewById(R.id.movieTitle_toolbar_textView);
                 ImageView moviePosterImageView = (ImageView) rootView.findViewById(R.id.detail_moviePoster_imageView);
+                TextView movieYearTextView = (TextView) rootView.findViewById(R.id.detail_movieYear_textView);
+                TextView movieDurationTextView = (TextView) rootView.findViewById(R.id.detail_movieDuration_textView);
+                TextView movieVoteAvgTextView = (TextView) rootView.findViewById(R.id.detail_movieVoteAvg_textView);
                 TextView movieOverviewTextView = (TextView) rootView.findViewById(R.id.detail_overview_textView);
                 // Set text and image values
                 movieTitleTextView.setText(movieObj.getOriginalTitle());
@@ -89,6 +91,9 @@ public class DetailActivity extends AppCompatActivity {
                         .fit()
                         .centerCrop()
                         .into(moviePosterImageView);
+                movieYearTextView.setText(movieObj.getReleaseDateYear());
+                movieDurationTextView.setText(movieObj.getRuntime() + getString(R.string.minutes_shorthand));
+                movieVoteAvgTextView.setText(movieObj.getVoteAverage() + "/" + getString(R.string.max_vote_avg));
                 movieOverviewTextView.setText(movieObj.getOverview());
             }
 

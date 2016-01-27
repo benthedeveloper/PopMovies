@@ -14,15 +14,17 @@ public class Movie implements Parcelable {
     private String overview;
     private double voteAverage;
     private String releaseDateStr;
+    private int runtime;
 
     // Constructor
-    public Movie(int id, String originalTitle, String posterURL, String overview, double voteAverage, String releaseDateStr) {
+    public Movie(int id, String originalTitle, String posterURL, String overview, double voteAverage, String releaseDateStr, int runtime) {
         this.id = id;
         this.originalTitle = originalTitle;
         this.posterURL = posterURL;
         this.overview = overview;
         this.voteAverage = voteAverage;
         this.releaseDateStr = releaseDateStr;
+        this.runtime = runtime;
     }
 
     // toString method
@@ -33,7 +35,8 @@ public class Movie implements Parcelable {
                 + "posterURL: " + getPosterURL() + "\n"
                 + "overview: " + getOverview() + "\n"
                 + "voteAverage: " + getVoteAverage() + "\n"
-                + "releaseDateStr: " + getReleaseDateStr() + "\n\n";
+                + "releaseDateStr: " + getReleaseDateStr() + "\n"
+                + "runTime: " + getRuntime() + "\n\n";
     }
 
     // Getters
@@ -53,7 +56,9 @@ public class Movie implements Parcelable {
         return this.overview;
     }
 
-    public double getVoteAverage() { return this.voteAverage; }
+    public double getVoteAverage() {
+        return this.voteAverage;
+    }
 
     public String getReleaseDateStr() {
         if (this.releaseDateStr == null || this.releaseDateStr.trim() == "") {
@@ -62,6 +67,18 @@ public class Movie implements Parcelable {
         return this.releaseDateStr;
     }
 
+    public int getRuntime() {
+        return this.runtime;
+    }
+
+    // Get only the year from the release date Str. Returns "No release date" if it's null or empty.
+    // Change this this to a translatable string value later
+    public String getReleaseDateYear() {
+        if (this.releaseDateStr == null || this.releaseDateStr == "") {
+            return "No release date";
+        }
+        return this.releaseDateStr.substring(0, 4);
+    }
 
     protected Movie(Parcel in) {
         id = in.readInt();
@@ -70,6 +87,7 @@ public class Movie implements Parcelable {
         overview = in.readString();
         voteAverage = in.readDouble();
         releaseDateStr = in.readString();
+        runtime = in.readInt();
     }
 
     @Override
@@ -85,6 +103,7 @@ public class Movie implements Parcelable {
         dest.writeString(overview);
         dest.writeDouble(voteAverage);
         dest.writeString(releaseDateStr);
+        dest.writeInt(runtime);
     }
 
     @SuppressWarnings("unused")
